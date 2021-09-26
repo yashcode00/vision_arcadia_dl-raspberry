@@ -51,8 +51,8 @@ def collectGestureImages():
     if not os.path.exists(folderName):
         os.makedirs(folderName)
     cam = cv2.VideoCapture(0)
-    cam.set(cv2.CAP_PROP_FRAME_WIDTH, 400)
-    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 400)
+    cam.set(cv2.CAP_PROP_FRAME_WIDTH, 700)
+    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1000)
     time.sleep(1)
     count = 0
     img_counter = 0
@@ -61,13 +61,14 @@ def collectGestureImages():
         if ret:
             cv2.imshow('frame', frame)
             #print(type(frame))
-            if count % 25 == 0:
+            if count % 50 == 0:
                 cv2.imwrite(folderName+"/frame%d.jpg" % img_counter, frame)
                 category = predict(model, folderName +
                                    "/frame%d.jpg" % img_counter)
                 # count+=1
                 print(category)
                 #3.print("Current File %d \r" % img_counter, end='')
+                os.remove(folderName+"/frame%d.jpg"%img_counter)
                 img_counter += 1
                 count = 0
             count += 1
