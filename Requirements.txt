@@ -1,0 +1,4 @@
+tensorflow,keras
+pip install pypiwin32
+pip install screen_brightness_control
+pip install pyautogui

@@ -7,17 +7,16 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
 import pyautogui as pag
+import webbrowser as web
 import screen_brightness_control as sbc
 np.random.seed(5)
 # tf.set_random_seed(2)
 
-CATEGORIES = ['A', 'B', 'C', 'F', 'G',
-              'G_invert', 'L', 'M', 'O', 'Q', 'V', 'Y']
+CATEGORIES = ['A', 'B', 'C', 'F', 'G', 'L', 'M', 'O', 'Q', 'V', 'Y', 'nothing']
 
 model = tf.keras.models.load_model('ASLGray.model')
 
 # prepare image to prediction
-
 
 def prepare(filepath):
     image = cv2.imdecode(np.fromfile(
@@ -31,9 +30,20 @@ def prepare(filepath):
 # use this function to predict images
 
 
+#def predict(my_model, filepath):
+#    prediction = model.predict([prepare(filepath)])
+#    category = np.argmax(prediction[0])
+#    return CATEGORIES[category]
+
+
+import scipy
+#use this function to predict images
 def predict(my_model, filepath):
     prediction = model.predict([prepare(filepath)])
+    probs = scipy.special.softmax(prediction[0])
+    confidence=str(round((1-max(probs))*100,2))+"%" 
     category = np.argmax(prediction[0])
+    print("-> Recognised hand sign: ",CATEGORIES[category]," (",confidence,")")
     return CATEGORIES[category]
 
 
@@ -43,11 +53,31 @@ def predict(my_model, filepath):
 #   display(Image('test/'+file))
 
 def runfunc(prediction):
-    if prediction == "M":
+    
+    if prediction == "B":
+        curr = sbc.get_brightness()+10
+        print("Your brightness increased to: ",str(curr)+" %")
+        sbc.set_brightness(curr, display = 0, force=False)
+    elif prediction=='C':
+        
+        curr = sbc.get_brightness()-10
+        print("Your brightness is reduced to: ",str(curr)+" %")
+        sbc.set_brightness(curr, display = 0, force=False)
+    elif prediction=='O':
+        web.open("https://www.google.com")
+    elif prediction == "L":
+        pag.press("volumeup")
+        pag.press("volumeup")
+    elif prediction == "Q":
+        pag.press("volumedown")
+        pag.press("volumedown")
+        pag.press("volumedown")
+        pag.press("volumedown")
+    elif prediction == "M":
         pag.press("volumemute")
-    elif prediction == "B":
-        curr = sbc.get_brightness()
-        sbc.set_brightness(curr+10, display = 0)
+    # elif prediction=='F':
+    #     pyautogui.hotkey('alt', 'shift', 'esc')
+
 
 
 def collectGestureImages():
@@ -75,12 +105,17 @@ def collectGestureImages():
                 category = predict(model, folderName +
                                    "/frame%d.jpg" % img_counter)
                 # count+=1
-                print(category)
+                #print("Recognised hand sign: ",category)
                 if category == "V":
-                    cv2.imwrite("pic%d.jpg"%img_counter, frame)
+                    if not os.path.isdir('pics/'):
+                        os.mkdir('pics')
+                    cv2.imwrite("pics/pic%d.jpg"%img_counter, frame)
                 elif category == "Y":
-                    pag.screenshot("screenshot%d.jpg"%img_counter)
-                else:
+                    path = "screenshots/"
+                    if not os.path.isdir(path):
+                        os.mkdir(path)
+                    pag.screenshot("screenshots/screenshot%d.jpg"%img_counter)
+                else:   
                     runfunc(category)
                 #3.print("Current File %d \r" % img_counter, end='')
                 os.remove(folderName+"/frame%d.jpg"%img_counter)
