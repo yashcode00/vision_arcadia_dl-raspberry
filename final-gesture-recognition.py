@@ -6,6 +6,8 @@ import os
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
+import pyautogui as pag
+import screen_brightness_control as sbc
 np.random.seed(5)
 # tf.set_random_seed(2)
 
@@ -40,6 +42,13 @@ def predict(my_model, filepath):
 #   print("The image class is: " + str(category))
 #   display(Image('test/'+file))
 
+def runfunc(prediction):
+    if prediction == "M":
+        pag.press("volumemute")
+    elif prediction == "B":
+        curr = sbc.get_brightness()
+        sbc.set_brightness(curr+10, display = 0)
+
 
 def collectGestureImages():
     '''
@@ -67,6 +76,12 @@ def collectGestureImages():
                                    "/frame%d.jpg" % img_counter)
                 # count+=1
                 print(category)
+                if category == "V":
+                    cv2.imwrite("pic%d.jpg"%img_counter, frame)
+                elif category == "Y":
+                    pag.screenshot("screenshot%d.jpg"%img_counter)
+                else:
+                    runfunc(category)
                 #3.print("Current File %d \r" % img_counter, end='')
                 os.remove(folderName+"/frame%d.jpg"%img_counter)
                 img_counter += 1
