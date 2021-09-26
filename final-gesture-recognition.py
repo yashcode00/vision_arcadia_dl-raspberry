@@ -44,7 +44,7 @@ def predict(my_model, filepath):
     confidence=str(round((1-max(probs))*100,2))+"%" 
     category = np.argmax(prediction[0])
     print("-> Recognised hand sign: ",CATEGORIES[category]," (",confidence,")")
-    return CATEGORIES[category]
+    return CATEGORIES[category],confidence
 
 
 # for file in os.listdir('test/'):
@@ -95,15 +95,29 @@ def collectGestureImages():
     time.sleep(1)
     count = 0
     img_counter = 0
+    #start_rectangle frame coordinates
+    s1=10
+    s2=10 #top
+    # end_rectangle frame coordinates
+    e1=400 # width
+    e2=400
     while True:
         ret, frame = cam.read()
         if ret:
-            cv2.imshow('frame', frame)
+            cv2.rectangle(frame,(s1,s2),(e1,e2),(255,0,0),2)
+            #cv2.imshow('frame', frame)
             #print(type(frame))
             if count % 50 == 0:
-                cv2.imwrite(folderName+"/frame%d.jpg" % img_counter, frame)
-                category = predict(model, folderName +
+                 # extract the region of image within the user rectangle
+                roi = frame[s1:e1, s2:e2]
+                cv2.imwrite(folderName+"/frame%d.jpg" % img_counter, roi)
+                category ,confidence= predict(model, folderName +
                                    "/frame%d.jpg" % img_counter)
+                 # display the information
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                out_text="I guess it is "+category+" "+" ("+str(confidence)+")"
+                cv2.putText(frame,out_text,(40,100), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
+                cv2.imshow(" ",frame)
                 # count+=1
                 #print("Recognised hand sign: ",category)
                 if category == "V":
