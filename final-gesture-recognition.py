@@ -90,6 +90,7 @@ def collectGestureImages():
     if not os.path.exists(folderName):
         os.makedirs(folderName)
     cam = cv2.VideoCapture(0)
+    cam.set(cv2.CAP_PROP_BUFFERSIZE,2)
     cam.set(cv2.CAP_PROP_FRAME_WIDTH, 700)
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1000)
     time.sleep(1)
@@ -100,7 +101,7 @@ def collectGestureImages():
     s2=40 #top
     # end_rectangle frame coordinates
     e1=400 # width
-    e2=400
+    e2=425
     while True:
         ret, frame = cam.read()
         if ret:
@@ -116,7 +117,7 @@ def collectGestureImages():
                  # display the information
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 out_text="I guess it is "+category+" "+" ("+str(confidence)+")"
-                cv2.putText(frame,out_text,(5,30), font, 0.9, (255, 255, 255), 2, cv2.LINE_AA)
+                cv2.putText(frame,out_text,(5,30), font, 0.9, (0,255,0), 2, cv2.LINE_AA)
                 cv2.imshow(" ",frame)
                 # count+=1
                 #print("Recognised hand sign: ",category)
