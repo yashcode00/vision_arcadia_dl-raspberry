@@ -97,7 +97,7 @@ def collectGestureImages():
     img_counter = 0
     #start_rectangle frame coordinates
     s1=10
-    s2=10 #top
+    s2=40 #top
     # end_rectangle frame coordinates
     e1=400 # width
     e2=400
@@ -116,7 +116,7 @@ def collectGestureImages():
                  # display the information
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 out_text="I guess it is "+category+" "+" ("+str(confidence)+")"
-                cv2.putText(frame,out_text,(40,100), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
+                cv2.putText(frame,out_text,(5,30), font, 0.9, (255, 255, 255), 2, cv2.LINE_AA)
                 cv2.imshow(" ",frame)
                 # count+=1
                 #print("Recognised hand sign: ",category)
