@@ -56,25 +56,30 @@ def runfunc(prediction):
     
     if prediction == "B":
         curr = sbc.get_brightness()+10
-        print("Your brightness increased to: ",str(curr)+" %")
+        print("  Your brightness increased to: ",str(curr)+" %")
         sbc.set_brightness(curr, display = 0, force=False)
     elif prediction=='C':
         
         curr = sbc.get_brightness()-10
-        print("Your brightness is reduced to: ",str(curr)+" %")
+        print("  Your brightness is reduced to: ",str(curr)+" %")
         sbc.set_brightness(curr, display = 0, force=False)
     elif prediction=='O':
+        print("  Opening default browser!")
         web.open("https://www.google.com")
     elif prediction == "L":
         pag.press("volumeup")
         pag.press("volumeup")
+        print("  Increasing volume by 2 units!")
     elif prediction == "Q":
         pag.press("volumedown")
         pag.press("volumedown")
         pag.press("volumedown")
         pag.press("volumedown")
+        print("  Decreasing Volume by 4 units!")
     elif prediction == "M":
         pag.press("volumemute")
+        print("  You are are muted/umuted now!")
+
     # elif prediction=='F':
     #     pyautogui.hotkey('alt', 'shift', 'esc')
 
