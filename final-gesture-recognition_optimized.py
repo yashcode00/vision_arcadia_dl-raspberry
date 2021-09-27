@@ -9,7 +9,6 @@ import numpy as np
 import pyautogui as pag
 import webbrowser as web
 import screen_brightness_control as sbc
-from object_detection.utils import visualization_utils as viz_utils
 np.random.seed(5)
 # tf.set_random_seed(2)
 
@@ -87,8 +86,7 @@ def collectGestureImages():
     Open camera capture each frame and save it in that folder
     '''
 
-    #folderName = input("Enter the folder name to save the images: ")
-    folderName ='a'
+    folderName ='prediction_data'
     if not os.path.exists(folderName):
         os.makedirs(folderName)
     cam = cv2.VideoCapture(0)
@@ -106,7 +104,7 @@ def collectGestureImages():
     while cam.isOpened():
         ret, frame = cam.read()
         if ret:
-            time.sleep(.5)
+            time.sleep(.2)
             diff = cv2.absdiff(frame1, frame2)
             gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray, (5,5), 0)
@@ -153,13 +151,11 @@ def collectGestureImages():
             #3.print("Current File %d \r" % img_counter, end='')
             os.remove(folderName+"/frame%d.jpg"%img_counter)
             img_counter += 1
-            #count = 0
-            #count += 1
+
             # Break if 'q' is pressed
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if cv2.waitKey(1) & 0xFF == ord('q'): # NOT WORKING
             break
 
-        # time.sleep(1)
 
     cam.release()
     cv2.destroyAllWindows()
