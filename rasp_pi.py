@@ -57,7 +57,37 @@ def runfunc(prediction):
         pag.press("volumedown")
     elif prediction == "M":
         pag.press("volumemute")
-    # elif prediction=='F':
+    elif prediction=='F':
+        #brightness control
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(20,GPIO.OUT,initial=GPIO.HIGH)
+        P = GPIO.PWM(20,100)
+        P.start(0)
+        #increase in brightness
+        while 1 :
+        
+         for i in range(100):
+          P.start(i)
+          time.sleep(0.5)
+        #decrease in brightness  
+        while 1 :
+
+         for i in range(100):
+          P.start(100-i)
+          time.sleep(0.5)
+    
+    elif prediction == "A":
+        #Blinking an LED
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(18, GPIO.OUT, initial=GPIO.LOW)
+        while 1 :
+            GPIO.output(18, GPIO.HIGH) # Turn on
+            time.sleep(1) # Sleep for 1 second
+            GPIO.output(18, GPIO.LOW) # Turn on
+            time.sleep(1) # Sleep for 1 second
+
+
+
     #     pyautogui.hotkey('alt', 'shift', 'esc')
 dict={'A':'na', 'B':"Brightness up", 'C':"Brightness down", 'F':"na", 'G':"Next Tab", 'L':"Volume up", 'M':"Mute/Unmute", 'O':"Open Browser", 'Q':"Volume Down", 'V':"Capture photo (webcam)", 'Y':"Screenshot", 'nothing':"OiOiTee Monday"}
 
