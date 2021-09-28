@@ -9,6 +9,7 @@ import numpy as np
 import pyautogui as pag
 import webbrowser as web
 import screen_brightness_control as sbc
+from object_detection.utils import visualization_utils as viz_utils
 np.random.seed(5)
 # tf.set_random_seed(2)
 
@@ -77,16 +78,18 @@ def runfunc(prediction):
         pag.press("volumemute")
     # elif prediction=='F':
     #     pyautogui.hotkey('alt', 'shift', 'esc')
+dict={'A':'na', 'B':"Brightness up", 'C':"Brightness down", 'F':"na", 'G':"Next Tab", 'L':"Volume up", 'M':"Mute/Unmute", 'O':"Open Browser", 'Q':"Volume Down", 'V':"Capture photo (webcam)", 'Y':"Screenshot", 'nothing':"OiOiTee Monday"}
 
 
 
-def collectGestureImages():
+def collectGestureImages(dict):
     '''
     Take a folder name as input from user and create it if not exisits
     Open camera capture each frame and save it in that folder
     '''
 
-    folderName ='prediction_data'
+    #folderName = input("Enter the folder name to save the images: ")
+    folderName ='a'
     if not os.path.exists(folderName):
         os.makedirs(folderName)
     cam = cv2.VideoCapture(0)
@@ -104,7 +107,7 @@ def collectGestureImages():
     while cam.isOpened():
         ret, frame = cam.read()
         if ret:
-            time.sleep(.2)
+            time.sleep(.5)
             diff = cv2.absdiff(frame1, frame2)
             gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray, (5,5), 0)
@@ -122,8 +125,10 @@ def collectGestureImages():
                 cv2.imwrite(folderName+"/frame%d.jpg" % img_counter, frame1)
                 category ,confidence= predict(model, folderName +"/frame%d.jpg" % img_counter)
                 out_text="I guess it is "+category+" "+" ("+str(confidence)+")"
+                action="Action taken: "+str(dict[category])
                 font = cv2.FONT_HERSHEY_SIMPLEX
-                cv2.putText(frame1,out_text,(x,y), font, 0.8, (0, 0, 255), 2, cv2.LINE_AA)
+                cv2.putText(frame1,out_text,(x,y-40), font, 0.8, (0, 0, 255), 2, cv2.LINE_AA)
+                cv2.putText(frame1,action,(x,y-10), font, 0.8, (0, 0, 255), 2, cv2.LINE_AA)
             # img_counter+=1
             #image = cv2.resize(frame1, (1280,720))
             #cam.write(image)
@@ -151,15 +156,17 @@ def collectGestureImages():
             #3.print("Current File %d \r" % img_counter, end='')
             os.remove(folderName+"/frame%d.jpg"%img_counter)
             img_counter += 1
-
+            #count = 0
+            #count += 1
             # Break if 'q' is pressed
-        if cv2.waitKey(1) & 0xFF == ord('q'): # NOT WORKING
+        if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
+        # time.sleep(1)
 
     cam.release()
     cv2.destroyAllWindows()
     print("Created folder: " + folderName)
 
 
-collectGestureImages()
+collectGestureImages(dict)
