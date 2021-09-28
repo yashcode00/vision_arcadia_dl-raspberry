@@ -1,23 +1,20 @@
-import time
+import time,scipy
 from sklearn.model_selection import train_test_split
 import keras
 import cv2
 import os
-import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
 import pyautogui as pag
 import webbrowser as web
 import screen_brightness_control as sbc
-# from object_detection.utils import visualization_utils as viz_utils
 np.random.seed(5)
-# tf.set_random_seed(2)
+
+dim_x,dim_y=1000,1000
 
 CATEGORIES = ['A', 'B', 'C', 'F', 'G', 'L', 'M', 'O', 'Q', 'V', 'Y', 'nothing']
 
 model = tf.keras.models.load_model('ASLGray_model.h5')
-
-# prepare image to prediction
 
 def prepare(filepath):
     image = cv2.imdecode(np.fromfile(
@@ -28,17 +25,6 @@ def prepare(filepath):
     image = image.astype('float32')/255.0
     return image
 
-# use this function to predict images
-
-
-#def predict(my_model, filepath):
-#    prediction = model.predict([prepare(filepath)])
-#    category = np.argmax(prediction[0])
-#    return CATEGORIES[category]
-
-
-import scipy
-#use this function to predict images
 def predict(my_model, filepath):
     prediction = model.predict([prepare(filepath)])
     probs = scipy.special.softmax(prediction[0])
@@ -47,11 +33,6 @@ def predict(my_model, filepath):
     print("-> Recognised hand sign: ",CATEGORIES[category]," (",confidence,")")
     return CATEGORIES[category],confidence
 
-
-# for file in os.listdir('test/'):
-#   category = predict(model,'test/'+file)
-#   print("The image class is: " + str(category))
-#   display(Image('test/'+file))
 
 def runfunc(prediction):
     
@@ -81,33 +62,31 @@ def runfunc(prediction):
 dict={'A':'na', 'B':"Brightness up", 'C':"Brightness down", 'F':"na", 'G':"Next Tab", 'L':"Volume up", 'M':"Mute/Unmute", 'O':"Open Browser", 'Q':"Volume Down", 'V':"Capture photo (webcam)", 'Y':"Screenshot", 'nothing':"OiOiTee Monday"}
 
 
+from picamera.array import PiRGBArray
+from picamera import PiCamera
+import RPi.GPIO as GPIO
+
+camera= PiCamera ()
+camera. resolution=(dim_x,dim_y)
+camera.framerate=4
+
+# display the image on screen and wait for a keypress
+# cv2.imshow("Image", frame)
 
 def collectGestureImages(dict):
-    '''
-    Take a folder name as input from user and create it if not exisits
-    Open camera capture each frame and save it in that folder
-    '''
-
-    #folderName = input("Enter the folder name to save the images: ")
-    folderName ='a'
-    if not os.path.exists(folderName):
-        os.makedirs(folderName)
-    cam = cv2.VideoCapture(0)
-    cam.set(cv2.CAP_PROP_FRAME_WIDTH,1000)
-    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1000)
-    time.sleep(1)
     count = 0
     img_counter = 0
-
-    ret, frame1 = cam.read()
-    frame1 = cv2.flip(frame1, 1)
-    ret, frame2 = cam.read()
-    frame2 = cv2.flip(frame2, 1)
-
-    while cam.isOpened():
-        ret, frame = cam.read()
-        if ret:
+    with picamera.PiCamera() as camera:
+        # camera.resolution = (dim_x,dim_y)
+        # camera.framerate =4
+        while(True):
+            rawCapture =PiRGBArray ( camera , size = (dim_x,dim_y))
+            camera.capture(rawCapture, format="bgr")
+            frame1 = rawCapture.array
             time.sleep(.5)
+            camera.capture(rawCapture, format="bgr")
+            frame2 = rawCapture.array
+
             diff = cv2.absdiff(frame1, frame2)
             gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray, (5,5), 0)
@@ -122,51 +101,58 @@ def collectGestureImages(dict):
                     continue
                 cv2.rectangle(frame1, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
-                cv2.imwrite(folderName+"/frame%d.jpg" % img_counter, frame1)
-                category ,confidence= predict(model, folderName +"/frame%d.jpg" % img_counter)
+                cv2.imwrite("frame%d.jpg" % img_counter, frame1)
+                category ,confidence= predict(model, "frame%d.jpg" % img_counter)
                 out_text="I guess it is "+category+" "+" ("+str(confidence)+")"
                 action="Action taken: "+str(dict[category])
                 font = cv2.FONT_HERSHEY_SIMPLEX
-                cv2.putText(frame1,out_text,(x,y-40), font, 0.8, (0, 0, 255), 2, cv2.LINE_AA)
-                cv2.putText(frame1,action,(x,y-10), font, 0.8, (0, 0, 255), 2, cv2.LINE_AA)
-            # img_counter+=1
-            #image = cv2.resize(frame1, (1280,720))
-            #cam.write(image)
-            cv2.imshow("feed", frame1)
-            frame1 = frame2
-            ret, frame2 = cam.read()
-            frame2 = cv2.flip(frame2, 1)
+                cv2.putText(frame2,out_text,(x,y-40), font, 0.8, (0, 0, 255), 2, cv2.LINE_AA)
+                cv2.putText(frame2,action,(x,y-10), font, 0.8, (0, 0, 255), 2, cv2.LINE_AA)
+            cv2.imshow("feed", frame2)
 
 
-        if cv2.waitKey(40) == 27:
-            break
-  
-            category=0
-            if category == "V":
-                if not os.path.isdir('pics/'):
-                    os.mkdir('pics')
-                    cv2.imwrite("pics/pic%d.jpg"%img_counter, frame)
-            elif category == "Y":
-                path = "screenshots/"
-                if not os.path.isdir(path):
-                    os.mkdir(path)
-                    pag.screenshot("screenshots/screenshot%d.jpg"%img_counter)
-            else:   
-                runfunc(category)
-            #3.print("Current File %d \r" % img_counter, end='')
-            os.remove(folderName+"/frame%d.jpg"%img_counter)
-            img_counter += 1
-            #count = 0
-            #count += 1
-            # Break if 'q' is pressed
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+            if cv2.waitKey(40) == 27:
+                break
 
-        # time.sleep(1)
+                category=0
+                if category == "V":
+                    if not os.path.isdir('pics/'):
+                        os.mkdir('pics')
+                        cv2.imwrite("pics/pic%d.jpg"%img_counter, frame)
+                elif category == "Y":
+                    path = "screenshots/"
+                    if not os.path.isdir(path):
+                        os.mkdir(path)
+                        pag.screenshot("screenshots/screenshot%d.jpg"%img_counter)
+                else:   
+                    runfunc(category)
+                os.remove(folderName+"/frame%d.jpg"%img_counter)
+                img_counter += 1
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
-    cam.release()
-    cv2.destroyAllWindows()
-    print("Created folder: " + folderName)
+# camera.start_preview()
+# camera.capture(output, 'rgb')
+# frame = rawCapture.array
+# # display the image on screen and wait for a keypress
+# cv2.imshow("Image", frame)
 
+
+
+# for frame in camera.capture_continuous( rawCapture ,format = " bgr ", use_video_port =True ):
+# grab the raw NumPy array representing the image ,
+# then initialize the timestamp
+# and occupied / unoccupied text
+# image = frame.array
+
+# with picamera.PiCamera() as camera:
+#     camera.resolution = (640, 480)
+#     camera.framerate =4
+#     camera.start_preview()
+#     time.sleep(.5)
+#     camera.capture_sequence([
+#         'image1.jpg',
+#         'image2.jpg',
+#         ], use_video_port=True)
 
 collectGestureImages(dict)
