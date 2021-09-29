@@ -1,21 +1,38 @@
 # vision_arcadia_dl-raspberry
 This is a projection aims to detect, classify and interpret hand signs and use them to perform certain tasks using raspberry pi 4. It's model is made using Deep Learning! 
 
+
+### See the instruction video through the link: https://drive.google.com/file/d/1mB8NFeoaS7BS5cpfPiskXSvvmwU8DM3Q/view?usp=sharing
+
+
+
 The model uses 5 layer CNN,trained using the American Sign Language(ASL) data on kaggle(https://www.kaggle.com/grassknoted/asl-alphabet) for 12 classes(letters) using 3000 images for each class.
 
 The original model has been saved as "ASLGray_model.h5" file.
 
 For use with raspberry pi 4,it has been converted to "ML_model.tflite".However "ASLGray_model.h5" can also be used.
 
+
+
+### The data used for training is present here : https://drive.google.com/file/d/1Kc3lU8xLcxg2_Im__4Mxs4iZPVLRz36_/view?usp=sharing
+
 ## About automated tasks using hand gesture recognition
 The following signs/alphabets yield the corresponding functions:
+
 B->Screen brightness up
+
 C->Screen brightness down
+
 L->Volume up
+
 M->Mute
+
 O->Open google in browser
+
 Q->Volume down
+
 V->Capture photo using webcam
+
 Y->Take screenshot
 
 ## About LED Blinking:
@@ -58,5 +75,5 @@ On linux Operating systems, make sure to remove the whole code and add the follo
 replace x by your version of python, for eg if it is python3.8 then replace x by 8
 
 Copy Code from:
-"""
+
 https://pastebin.com/0HcxJHDm
