@@ -1,14 +1,25 @@
-pip install tensorflow
-pip install screen_brightness_control
-pip install pyautogui
-pip install webbrowser
-pip install picamera
-sudo apt-get install rpi.gpio
-
-
-scipy==1.7.1
+certifi==2021.5.30
+charset-normalizer==2.0.6
+docopt==0.6.2
+idna==3.2
+MouseInfo==0.1.3
 numpy==1.21.2
-picamera==1.13
-pyautogui==0.9.53
-screen_brightness_control==0.11.1
+opencv-python==4.5.3.56
+Pillow==8.3.2
+pipreqs==0.4.10
+PyAutoGUI==0.9.53
+PyGetWindow==0.0.9
+PyMsgBox==1.0.9
+pyperclip==1.8.2
+PyRect==0.1.4
+PyScreeze==0.1.28
+pytweening==1.0.4
+pywin32==301
+requests==2.26.0
+scipy==1.7.1
+screen-brightness-control==0.11.1
 tensorflow==2.6.0
+urllib3==1.26.7
+wincertstore==0.2
+WMI==1.5.1
+yarg==0.1.9

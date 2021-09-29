@@ -55,7 +55,7 @@ def runfunc(prediction):
         pag.press("volumemute")
     # elif prediction=='F':
     #     pyautogui.hotkey('alt', 'shift', 'esc')
-dict={'A':'A detected', 'B':"Brightness up", 'C':"Brightness down", 'F':"F detected", 'G':"Next Tab", 'L':"Volume up", 'M':"Mute/Unmute", 'O':"Open Browser", 'Q':"Volume Down", 'V':"Capture photo (webcam)", 'Y':"Screenshot", 'nothing':"Nothing detected"}
+dict={'A':'A detected', 'B':"Brightness up", 'C':"Brightness down", 'F':"F detected", 'G':"Nothing", 'L':"Volume up", 'M':"Mute/Unmute", 'O':"Open Browser", 'Q':"Volume Down", 'V':"Capture photo (webcam)", 'Y':"Screenshot", 'nothing':"Nothing detected"}
 
 
 
