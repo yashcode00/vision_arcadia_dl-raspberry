@@ -1,6 +1,5 @@
 import time
-from sklearn.model_selection import train_test_split
-import keras
+import scipy
 import cv2
 import os
 import tensorflow as tf
@@ -8,16 +7,12 @@ import numpy as np
 import pyautogui as pag
 import webbrowser as web
 import screen_brightness_control as sbc
-# from object_detection.utils import visualization_utils as viz_utils
-np.random.seed(5)
-# tf.set_random_seed(2)
 
 CATEGORIES = ['A', 'B', 'C', 'F', 'G', 'L', 'M', 'O', 'Q', 'V', 'Y', 'nothing']
 
 model = tf.keras.models.load_model('ASLGray_model.h5')
 
 # prepare image to prediction
-
 def prepare(filepath):
     image = cv2.imdecode(np.fromfile(
         filepath, dtype=np.uint8), cv2.IMREAD_UNCHANGED)
@@ -27,16 +22,6 @@ def prepare(filepath):
     image = image.astype('float32')/255.0
     return image
 
-# use this function to predict images
-
-
-#def predict(my_model, filepath):
-#    prediction = model.predict([prepare(filepath)])
-#    category = np.argmax(prediction[0])
-#    return CATEGORIES[category]
-
-
-import scipy
 #use this function to predict images
 def predict(my_model, filepath):
     prediction = model.predict([prepare(filepath)])
@@ -46,12 +31,6 @@ def predict(my_model, filepath):
     print("-> Recognised hand sign: ",CATEGORIES[category]," (",confidence,")")
     return CATEGORIES[category],confidence
 
-
-# for file in os.listdir('test/'):
-#   category = predict(model,'test/'+file)
-#   print("The image class is: " + str(category))
-#   display(Image('test/'+file))
-
 def runfunc(prediction):
     
     if prediction == "B":
@@ -59,7 +38,6 @@ def runfunc(prediction):
         print("Your brightness increased to: ",str(curr)+" %")
         sbc.set_brightness(curr, display = 0, force=False)
     elif prediction=='C':
-        
         curr = sbc.get_brightness()-10
         print("Your brightness is reduced to: ",str(curr)+" %")
         sbc.set_brightness(curr, display = 0, force=False)
@@ -77,18 +55,13 @@ def runfunc(prediction):
         pag.press("volumemute")
     # elif prediction=='F':
     #     pyautogui.hotkey('alt', 'shift', 'esc')
-dict={'A':'na', 'B':"Brightness up", 'C':"Brightness down", 'F':"na", 'G':"Next Tab", 'L':"Volume up", 'M':"Mute/Unmute", 'O':"Open Browser", 'Q':"Volume Down", 'V':"Capture photo (webcam)", 'Y':"Screenshot", 'nothing':"OiOiTee Monday"}
+dict={'A':'A detected', 'B':"Brightness up", 'C':"Brightness down", 'F':"F detected", 'G':"Next Tab", 'L':"Volume up", 'M':"Mute/Unmute", 'O':"Open Browser", 'Q':"Volume Down", 'V':"Capture photo (webcam)", 'Y':"Screenshot", 'nothing':"Nothing detected"}
 
 
 
 def collectGestureImages(dict):
-    '''
-    Take a folder name as input from user and create it if not exisits
-    Open camera capture each frame and save it in that folder
-    '''
-
-    #folderName = input("Enter the folder name to save the images: ")
-    folderName ='a'
+    
+    folderName ='captured_images'
     if not os.path.exists(folderName):
         os.makedirs(folderName)
     cam = cv2.VideoCapture(0)
@@ -105,8 +78,8 @@ def collectGestureImages(dict):
 
     while cam.isOpened():
         ret, frame = cam.read()
+        # category="nothing"
         if ret:
-            time.sleep(.5)
             diff = cv2.absdiff(frame1, frame2)
             gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray, (5,5), 0)
@@ -126,43 +99,36 @@ def collectGestureImages(dict):
                 out_text="I guess it is "+category+" "+" ("+str(confidence)+")"
                 action="Action taken: "+str(dict[category])
                 font = cv2.FONT_HERSHEY_SIMPLEX
+                
+                if category == "V":
+                    if not os.path.isdir('pics/'):
+                        os.mkdir('pics')
+                    cv2.imwrite("pics/pic%d.jpg"%img_counter, frame1)
+                elif category == "Y":
+                    path = "screenshots/"
+                    if not os.path.isdir(path):
+                        os.mkdir(path)
+                    pag.screenshot("screenshots/screenshot%d.jpg"%img_counter)
+                else:   
+                    runfunc(category)
+
                 cv2.putText(frame1,out_text,(x,y-40), font, 0.8, (0, 0, 255), 2, cv2.LINE_AA)
                 cv2.putText(frame1,action,(x,y-10), font, 0.8, (0, 0, 255), 2, cv2.LINE_AA)
-            # img_counter+=1
-            #image = cv2.resize(frame1, (1280,720))
-            #cam.write(image)
-            cv2.imshow("feed", frame1)
+
+                os.remove(folderName+"/frame%d.jpg"%img_counter) #deleting captured frames
+                img_counter += 1
+
+            cv2.imshow("Hand Gesture recognition", frame1)
             frame1 = frame2
             ret, frame2 = cam.read()
             frame2 = cv2.flip(frame2, 1)
+            time.sleep(1)
 
 
         if cv2.waitKey(40) == 27:
             break
   
-            category=0
-            if category == "V":
-                if not os.path.isdir('pics/'):
-                    os.mkdir('pics')
-                    cv2.imwrite("pics/pic%d.jpg"%img_counter, frame)
-            elif category == "Y":
-                path = "screenshots/"
-                if not os.path.isdir(path):
-                    os.mkdir(path)
-                    pag.screenshot("screenshots/screenshot%d.jpg"%img_counter)
-            else:   
-                runfunc(category)
-            #3.print("Current File %d \r" % img_counter, end='')
-            os.remove(folderName+"/frame%d.jpg"%img_counter)
-            img_counter += 1
-            #count = 0
-            #count += 1
-            # Break if 'q' is pressed
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-        # time.sleep(1)
-
+        
     cam.release()
     cv2.destroyAllWindows()
     print("Created folder: " + folderName)

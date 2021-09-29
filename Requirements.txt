@@ -1,4 +1,14 @@
-tensorflow,keras
-pip install pypiwin32
+pip install tensorflow
 pip install screen_brightness_control
 pip install pyautogui
+pip install webbrowser
+pip install picamera
+sudo apt-get install rpi.gpio
+
+
+scipy==1.7.1
+numpy==1.21.2
+picamera==1.13
+pyautogui==0.9.53
+screen_brightness_control==0.11.1
+tensorflow==2.6.0
