@@ -7,8 +7,6 @@ The original model has been saved as "ASLGray_model.h5" file.
 
 For use with raspberry pi 4,it has been converted to "ML_model.tflite".However "ASLGray_model.h5" can also be used.
 
-
-
 ## About LED Blinking:
 
 Process : 
@@ -43,6 +41,7 @@ Instructions :-
 
 
 ## Important ##
+# Problem only on linux systems
 On linux Operating systems, make sure to remove the whole code and add the following code to 
 "~/.local/lib/python3.x/site-packages/pyautogui/_pyautogui_x11.py"
 replace x by your version of python, for eg if it is python3.8 then replace x by 8
