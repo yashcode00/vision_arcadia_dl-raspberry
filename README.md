@@ -7,6 +7,17 @@ The original model has been saved as "ASLGray_model.h5" file.
 
 For use with raspberry pi 4,it has been converted to "ML_model.tflite".However "ASLGray_model.h5" can also be used.
 
+## About automated tasks using hand gesture recognition
+The following signs/alphabets yield the corresponding functions:
+B->Screen brightness up
+C->Screen brightness down
+L->Volume up
+M->Mute
+O->Open google in browser
+Q->Volume down
+V->Capture photo using webcam
+Y->Take screenshot
+
 ## About LED Blinking:
 
 Process : 
