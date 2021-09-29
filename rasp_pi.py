@@ -88,7 +88,6 @@ def runfunc(prediction):
 
 
 
-    #     pyautogui.hotkey('alt', 'shift', 'esc')
 dict={'A':'na', 'B':"Brightness up", 'C':"Brightness down", 'F':"na", 'G':"Next Tab", 'L':"Volume up", 'M':"Mute/Unmute", 'O':"Open Browser", 'Q':"Volume Down", 'V':"Capture photo (webcam)", 'Y':"Screenshot", 'nothing':"OiOiTee Monday"}
 
 
@@ -103,7 +102,7 @@ camera.framerate=4
 # display the image on screen and wait for a keypress
 # cv2.imshow("Image", frame)
 
-def collectGestureImages(dict):
+def collectGestureImages():
     count = 0
     img_counter = 0
     with picamera.PiCamera() as camera:
@@ -185,4 +184,4 @@ def collectGestureImages(dict):
 #         'image2.jpg',
 #         ], use_video_port=True)
 
-collectGestureImages(dict)
+collectGestureImages()
