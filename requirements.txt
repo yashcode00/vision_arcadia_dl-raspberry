@@ -1,8 +1,0 @@
-pip install tensorflow
-pip install screen_brightness_control
-pip install pyautogui
-pip install webbrowser
-for raspberry pi :-
- from picamera.array import PiRGBArray
- from picamera import PiCamera
- import RPi.GPIO as GPIO

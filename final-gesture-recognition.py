@@ -78,8 +78,8 @@ def collectGestureImages(dict):
 
     while cam.isOpened():
         ret, frame = cam.read()
+        # category="nothing"
         if ret:
-            time.sleep(.5)
             diff = cv2.absdiff(frame1, frame2)
             gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
             blur = cv2.GaussianBlur(gray, (5,5), 0)
@@ -99,45 +99,36 @@ def collectGestureImages(dict):
                 out_text="I guess it is "+category+" "+" ("+str(confidence)+")"
                 action="Action taken: "+str(dict[category])
                 font = cv2.FONT_HERSHEY_SIMPLEX
-                cv2.putText(frame1,out_text,(x,y-40), font, 0.8, (0, 0, 255), 2, cv2.LINE_AA)
-                cv2.putText(frame1,action,(x,y-10), font, 0.8, (0, 0, 255), 2, cv2.LINE_AA)
-                cv2.imshow("feed", frame1)
-
+                
                 if category == "V":
                     if not os.path.isdir('pics/'):
                         os.mkdir('pics')
-                    cv2.imwrite("pics/pic%d.jpg"%img_counter, frame)
+                    cv2.imwrite("pics/pic%d.jpg"%img_counter, frame1)
                 elif category == "Y":
                     path = "screenshots/"
                     if not os.path.isdir(path):
                         os.mkdir(path)
-                        pag.screenshot("screenshots/screenshot%d.jpg"%img_counter)
+                    pag.screenshot("screenshots/screenshot%d.jpg"%img_counter)
                 else:   
                     runfunc(category)
-            #3.print("Current File %d \r" % img_counter, end='')
-                os.remove(folderName+"/frame%d.jpg"%img_counter)
+
+                cv2.putText(frame1,out_text,(x,y-40), font, 0.8, (0, 0, 255), 2, cv2.LINE_AA)
+                cv2.putText(frame1,action,(x,y-10), font, 0.8, (0, 0, 255), 2, cv2.LINE_AA)
+
+                os.remove(folderName+"/frame%d.jpg"%img_counter) #deleting captured frames
                 img_counter += 1
 
-
-                # img_counter+=1
-                #image = cv2.resize(frame1, (1280,720))
-                #cam.write(image)
+            cv2.imshow("Hand Gesture recognition", frame1)
             frame1 = frame2
             ret, frame2 = cam.read()
             frame2 = cv2.flip(frame2, 1)
+            time.sleep(1)
 
 
-        # if cv2.waitKey(40) == 27:
-        #     break
+        if cv2.waitKey(40) == 27:
+            break
   
-        #     #count = 0
-        #     #count += 1
-        #     # Break if 'q' is pressed
-        # if cv2.waitKey(1) & 0xFF == ord('q'):
-        #     break
-
-        # time.sleep(1)
-
+        
     cam.release()
     cv2.destroyAllWindows()
     print("Created folder: " + folderName)

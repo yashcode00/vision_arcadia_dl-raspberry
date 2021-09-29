@@ -113,10 +113,10 @@ def collectGestureImages(dict):
             frame2 = cv2.flip(frame2, 1)
 
 
-        if cv2.waitKey(40) == 27:
-            break
+        # if cv2.waitKey(40) == 27:
+        #     break
   
-            category=0
+            # category=0
             if category == "V":
                 if not os.path.isdir('pics/'):
                     os.mkdir('pics')
@@ -129,8 +129,8 @@ def collectGestureImages(dict):
             else:   
                 runfunc(category)
             #3.print("Current File %d \r" % img_counter, end='')
-            os.remove(folderName+"/frame%d.jpg"%img_counter)
             img_counter += 1
+            os.remove(folderName+"/frame%d.jpg"%img_counter)
             #count = 0
             #count += 1
             # Break if 'q' is pressed

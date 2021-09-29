@@ -2,3 +2,5 @@ pip install tensorflow
 pip install screen_brightness_control
 pip install pyautogui
 pip install webbrowser
+pip install picamera
+sudo apt-get install rpi.gpio
