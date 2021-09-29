@@ -3,7 +3,6 @@ from sklearn.model_selection import train_test_split
 import keras
 import cv2
 import os
-import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
 import pyautogui as pag
