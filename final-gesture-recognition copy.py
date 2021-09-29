@@ -101,40 +101,41 @@ def collectGestureImages(dict):
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 cv2.putText(frame1,out_text,(x,y-40), font, 0.8, (0, 0, 255), 2, cv2.LINE_AA)
                 cv2.putText(frame1,action,(x,y-10), font, 0.8, (0, 0, 255), 2, cv2.LINE_AA)
-                cv2.imshow("feed", frame1)
 
-                if category == "V":
-                    if not os.path.isdir('pics/'):
-                        os.mkdir('pics')
-                    cv2.imwrite("pics/pic%d.jpg"%img_counter, frame)
-                elif category == "Y":
-                    path = "screenshots/"
-                    if not os.path.isdir(path):
-                        os.mkdir(path)
-                        pag.screenshot("screenshots/screenshot%d.jpg"%img_counter)
-                else:   
-                    runfunc(category)
-            #3.print("Current File %d \r" % img_counter, end='')
-                os.remove(folderName+"/frame%d.jpg"%img_counter)
-                img_counter += 1
+                
 
-
-                # img_counter+=1
-                #image = cv2.resize(frame1, (1280,720))
-                #cam.write(image)
+            # img_counter+=1
+            #image = cv2.resize(frame1, (1280,720))
+            #cam.write(image)
+            cv2.imshow("feed", frame1)
             frame1 = frame2
             ret, frame2 = cam.read()
             frame2 = cv2.flip(frame2, 1)
 
 
-        # if cv2.waitKey(40) == 27:
-        #     break
+        if cv2.waitKey(40) == 27:
+            break
   
-        #     #count = 0
-        #     #count += 1
-        #     # Break if 'q' is pressed
-        # if cv2.waitKey(1) & 0xFF == ord('q'):
-        #     break
+            category=0
+            if category == "V":
+                if not os.path.isdir('pics/'):
+                    os.mkdir('pics')
+                    cv2.imwrite("pics/pic%d.jpg"%img_counter, frame)
+            elif category == "Y":
+                path = "screenshots/"
+                if not os.path.isdir(path):
+                    os.mkdir(path)
+                    pag.screenshot("screenshots/screenshot%d.jpg"%img_counter)
+            else:   
+                runfunc(category)
+            #3.print("Current File %d \r" % img_counter, end='')
+            os.remove(folderName+"/frame%d.jpg"%img_counter)
+            img_counter += 1
+            #count = 0
+            #count += 1
+            # Break if 'q' is pressed
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
         # time.sleep(1)
 

@@ -1,14 +1,8 @@
 import time,scipy
-from sklearn.model_selection import train_test_split
-import keras
 import cv2
 import os
 import tensorflow as tf
 import numpy as np
-import pyautogui as pag
-import webbrowser as web
-import screen_brightness_control as sbc
-np.random.seed(5)
 
 dim_x,dim_y=1000,1000
 
@@ -36,28 +30,7 @@ def predict(my_model, filepath):
 
 def runfunc(prediction):
     
-    if prediction == "B":
-        curr = sbc.get_brightness()+10
-        print("Your brightness increased to: ",str(curr)+" %")
-        sbc.set_brightness(curr, display = 0, force=False)
-    elif prediction=='C':
-        
-        curr = sbc.get_brightness()-10
-        print("Your brightness is reduced to: ",str(curr)+" %")
-        sbc.set_brightness(curr, display = 0, force=False)
-    elif prediction=='O':
-        web.open("https://www.google.com")
-    elif prediction == "L":
-        pag.press("volumeup")
-        pag.press("volumeup")
-    elif prediction == "Q":
-        pag.press("volumedown")
-        pag.press("volumedown")
-        pag.press("volumedown")
-        pag.press("volumedown")
-    elif prediction == "M":
-        pag.press("volumemute")
-    elif prediction=='F':
+    if prediction=='F':
         #brightness control
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(20,GPIO.OUT,initial=GPIO.HIGH)
@@ -71,12 +44,12 @@ def runfunc(prediction):
           time.sleep(0.5)
         #decrease in brightness  
         while 1 :
-
+     
          for i in range(100):
           P.start(100-i)
           time.sleep(0.5)
     
-    elif prediction == "A":
+    elif prediction == "A" or prediction == "M":
         #Blinking an LED
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(18, GPIO.OUT, initial=GPIO.LOW)
@@ -88,7 +61,7 @@ def runfunc(prediction):
 
 
 
-dict={'A':'na', 'B':"Brightness up", 'C':"Brightness down", 'F':"na", 'G':"Next Tab", 'L':"Volume up", 'M':"Mute/Unmute", 'O':"Open Browser", 'Q':"Volume Down", 'V':"Capture photo (webcam)", 'Y':"Screenshot", 'nothing':"OiOiTee Monday"}
+dict={'Blinking LED':'na', 'B':"B detected", 'C':"C detected", 'F':"Fade in,Fade out", 'G':"G detected", 'L':"L detected", 'M':"Blinking LED", 'O':"O detected", 'Q':"Q detected", 'V':"V detected", 'Y':"Y  detected", 'nothing':"No motion detected"}
 
 
 from picamera.array import PiRGBArray
@@ -99,15 +72,10 @@ camera= PiCamera ()
 camera. resolution=(dim_x,dim_y)
 camera.framerate=4
 
-# display the image on screen and wait for a keypress
-# cv2.imshow("Image", frame)
-
 def collectGestureImages():
     count = 0
     img_counter = 0
     with picamera.PiCamera() as camera:
-        # camera.resolution = (dim_x,dim_y)
-        # camera.framerate =4
         while(True):
             rawCapture =PiRGBArray ( camera , size = (dim_x,dim_y))
             camera.capture(rawCapture, format="bgr")
@@ -159,29 +127,5 @@ def collectGestureImages():
                 img_counter += 1
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
-
-# camera.start_preview()
-# camera.capture(output, 'rgb')
-# frame = rawCapture.array
-# # display the image on screen and wait for a keypress
-# cv2.imshow("Image", frame)
-
-
-
-# for frame in camera.capture_continuous( rawCapture ,format = " bgr ", use_video_port =True ):
-# grab the raw NumPy array representing the image ,
-# then initialize the timestamp
-# and occupied / unoccupied text
-# image = frame.array
-
-# with picamera.PiCamera() as camera:
-#     camera.resolution = (640, 480)
-#     camera.framerate =4
-#     camera.start_preview()
-#     time.sleep(.5)
-#     camera.capture_sequence([
-#         'image1.jpg',
-#         'image2.jpg',
-#         ], use_video_port=True)
 
 collectGestureImages()
